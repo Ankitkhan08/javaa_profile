@@ -59,10 +59,13 @@ public class FileUploadController {
 				user.setProfileImgPath(serverFile.getAbsolutePath());
 				userService.save(user);
 				
-				BufferedOutputStream stream = new BufferedOutputStream(
-						new FileOutputStream(serverFile));
-				stream.write(bytes);
-				stream.close();
+				// ** THIS IS THE CORRECTED PART **
+				// The BufferedOutputStream is now declared inside the try() block.
+				// This guarantees it will be closed automatically, fixing the resource leak.
+				try (BufferedOutputStream stream = new BufferedOutputStream(
+						new FileOutputStream(serverFile))) {
+					stream.write(bytes);
+				}
 
 				logger.info("Server File Location="
 						+ serverFile.getAbsolutePath());
